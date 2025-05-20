@@ -1,0 +1,173 @@
+@charset "UTF-8";
+
+header {
+    background-color: #2c3e50;
+    color: white;
+    padding: 1rem 2rem;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+body {
+  font-family: Arial, sans-serif;
+  background: #f0f0f0;
+  margin: 0;
+  padding: 20px;
+}
+
+nav a {
+    color: white;
+    margin-left: 1rem;
+    text-decoration: none;
+    font-weight: 500;
+}
+ 
+nav a:hover {
+    text-decoration: underline;
+}
+
+.container {
+  padding: 20px;
+  display: flex;
+  max-width: 1000px;
+  margin: auto;
+  gap: 30px;
+}
+
+.right {
+  height: 300px;
+  background: white;
+  padding: 20px;
+  border-radius: 8px;
+  flex: 1;
+}
+
+.left {
+  background: white;
+  padding: 20px;
+  border-radius: 8px;
+  flex: 1;
+}
+
+.top-left {
+  border: 2px solid #2c3e50;
+  border-radius: 8px;
+  padding: 3%;
+}
+
+
+.item-card {
+  border: 1px solid #2c3e50;
+  border-radius: 10px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  padding: 16px;
+  margin: 16px;
+  display: flex;
+  gap: 16px;
+  background-color: #fff;
+  transition: box-shadow 0.3s ease;
+}
+
+.item-card:hover {
+  box-shadow: 0 8px 16px rgba(0, 0, 0, 0.2);
+  transform: translateY(-4px);
+}
+
+.product-image {
+  width: 120px;
+  height: auto;
+  border-radius: 8px;
+  object-fit: cover;
+}
+
+/* Form input styling */
+form input, .payment input, .coupon input {
+  display: block;
+  width: 80%;
+  margin: 10px 0;
+  padding: 8px;
+  border-radius: 8px;
+  border: 1px solid #ccc;
+}
+
+/* For side-by-side form fields */
+.input-row {
+  display: flex;
+  gap: 10px;
+  width: 100%;
+  margin-bottom: 10px;
+}
+
+.input-row input {
+  flex: 1;
+  width: 100%;
+}
+
+/* Coupon area styling */
+.coupon {
+  display: flex;
+  gap: 10px;
+}
+
+.coupon button {
+  padding: 8px 12px;
+  color: #f6f6f6;
+  background-color: #2c3e50;  
+  border-radius: 8px;
+  border: none;
+  cursor: pointer;
+}
+
+/* Summary section */
+.summary p {
+  display: flex;
+  justify-content: space-between;
+  margin: 6px 0;
+}
+
+.pay-btn {
+  width: 100%;
+  background-color: #2c3e50;
+  color: white;
+  padding: 12px;
+  font-size: 16px;
+  border: 2px solid #2c3e50;
+  border-radius: 8px;
+  margin-top: 10px;
+  cursor: pointer;
+  position: relative;
+  overflow: hidden;
+  z-index: 1;
+  transition: color 0.4s ease;
+}
+
+.pay-btn::before {
+  content: "";
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%) scale(0);
+  width: 300%;
+  height: 300%;
+  background: white;
+  border-radius: 50%;
+  z-index: -1;
+  transition: transform 1s ease;
+}
+
+.pay-btn:hover::before {
+  transform: translate(-50%, -50%) scale(1);
+}
+
+.pay-btn:hover {
+  color: #2c3e50;
+  transform: translateY(-4px);
+  box-shadow: 0 8px 16px rgba(0, 0, 0, 0.2);
+}
+
+
+/* Message styling */
+.message {
+  margin: 10px 0;
+  color: #2c3e50;
+}

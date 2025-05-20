@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Checkout Page</title>
+  <link rel="stylesheet" href="css/checkoutstyle.css">
+</head>
+<body>
+  <header>
+    <h1>MyStore Dashboard</h1>
+    <nav>
+      <a href="http://localhost:9090/viewProducts.html">Home</a>
+      <a href="http://localhost:9090/checkOut.html">Cart</a>
+      <a href="http://localhost:9090/product.html">Add Product</a> 
+      <a href="#">About</a>
+      <a href="#">Login</a>
+      <a href="#">Report</a>
+    </nav>
+  </header>
+  <div class="container">
+    <div class="left">
+      
+    <div class="top-left">
+    <h2 class="review">Review Item</h2>
+    <div id="review-items-container">
+    
+    </div>
+        </div>
+    </div>
+
+    <div class="right">
+      <h2>Order Summary</h2>
+
+      <h3>Payment Details</h3>
+
+      <div class="summary">
+        <p id="totalSum">Total Amount: <span>₹0</span></p>
+        <p id="discountPrice">Offer Price: <span id="discount">₹0</span></p>
+        <p id="tax">Tax (18%): <span>₹0</span></p>
+        <p id="saved">Saved: <span>₹0</span></p>
+        <hr>
+        <p id="finalTotal"><strong>Total: <span id="total">₹0</span></strong></p>
+        <button class="pay-btn" onclick="pay()">Pay <span id="payAmount"></span></button>
+      </div>
+    </div>
+  </div>
+  <script src="js/checkoutscript.js"></script>
+</body>
+</html>

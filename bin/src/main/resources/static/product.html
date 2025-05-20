@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Add Product</title>
+  <link rel="stylesheet" href="css/productstyle.css" />
+</head>
+<body>
+	 <header>
+    <h1>MyStore Dashboard</h1>
+    <nav>
+      <a href="http://localhost:9090/viewProducts.html">Home</a>
+      <a href="http://localhost:9090/checkOut.html">Cart</a>
+      <a href="http://localhost:9090/product.html">Add Product</a> 
+      <a href="#">About</a>
+      <a href="#">Login</a>
+      <a href="#">Report</a>
+    </nav>
+  </header>
+  <div class="container">
+    <h2>Add New Product</h2>
+
+    <label for="productName">Product Name:</label>
+    <input type="text" id="productName" required>
+
+    <label for="price">Price (₹):</label>
+    <input type="number" id="price" required>
+
+    <label for="quantity">Quantity:</label>
+    <input type="number" id="quantity" required>
+
+    <label for="category">Category:</label>
+    <select id="category" required>
+      <option value="">Select Category</option>
+      <option value="Electronics">Electronics</option>
+      <option value="Groceries">Groceries</option>
+      <option value="Clothing">Clothing</option>
+      <option value="Stationery">Stationery</option>
+    </select>
+    <label for="productImage">Image URL:</label>
+    <input type="text" id="productImage" required>
+
+    
+    <button onclick="submitProduct()">Add Product</button>
+    <div class="message" id="messageBox"></div>
+  </div>
+
+  <script src="js/productscript.js"></script>
+</body>
+</html>

@@ -38,23 +38,43 @@ products.forEach(product => {
 });*/
 const productGrid = document.getElementById("productGrid");
 
+// Fetch and render all products
 fetch("/api/products")
   .then(response => response.json())
-  .then(async products => {
+  .then(products => {
     products.forEach(product => {
       const card = document.createElement("div");
       card.className = "product-card";
+
+      // Build inner HTML, showing buy controls only if in stock
       card.innerHTML = `
         <img src="${product.image}" alt="${product.name}" />
         <div class="product-info">
           <h3>${product.name}</h3>
-		  <h5>Category: ${product.category}</h5>
-          <p class="stock"> Price: ₹${product.price}</p>
-          <p class="stock ${product.stock <= 3 ? 'low' : ''}">Available: ${product.quantity}</p>
-          <input type="number" min="1" max="${product.quantity}" value="1" class="buy-quantity" />
-          <button class="buy-button" onclick='buy(this, ${JSON.stringify(product)})'>Buy</button>
+          <h5>Category: ${product.category}</h5>
+          <p class="stock">Price: ₹${product.price}</p>
+          <p class="stock ${product.quantity <= 3 ? 'low' : ''}">
+            Available: <span class="avail-count">${product.quantity}</span>
+          </p>
+          ${product.quantity > 0 ? `
+            <input 
+              type="number" 
+              min="1" 
+              max="${product.quantity}" 
+              value="1" 
+              class="buy-quantity" 
+              placeholder="Enter quantity" 
+            />
+            <button 
+              class="buy-button" 
+              onclick='buy(this, ${JSON.stringify(product)})'
+            >Buy</button>
+          ` : `
+            <p style="color: red; font-weight: bold;">Out of Stock</p>
+          `}
         </div>
       `;
+
       productGrid.appendChild(card);
     });
   })
@@ -62,63 +82,92 @@ fetch("/api/products")
     console.error("Failed to fetch products:", error);
   });
 
-  function buy(button, product) {
-    const quantityInput = button.parentElement.querySelector(".buy-quantity");
-    const quantityToBuy = parseInt(quantityInput.value);
+/**
+ * Handles Buy button clicks:
+ *  - Validates quantity
+ *  - Stores in localStorage cart
+ *  - Shows toast
+ *  - Decrements product.quantity and updates UI
+ *  - Swaps to "Out of Stock" when quantity ≤ 0
+ */
+function buy(button, product) {
+  const infoDiv = button.parentElement;
+  const qtyInput = infoDiv.querySelector(".buy-quantity");
+  const toBuy = parseInt(qtyInput.value, 10);
 
-    if (quantityToBuy > 0 && quantityToBuy <= product.quantity) {
-      const itemToStore = {
-        name: product.name,
-        quantity: quantityToBuy,
-		category: product.category,
-        price: product.price,
-        image: product.image
-      };
-
-      const cart = JSON.parse(localStorage.getItem("cartItems")) || [];
-      cart.push(itemToStore);
-      localStorage.setItem("cartItems", JSON.stringify(cart));
-	  showToastAsync(`${itemToStore.name} added to cart!`,true);
-
-    } else {
-      alert(`Please enter a valid quantity (1 to ${product.quantity})`);
-    }
-  }
-
-  
-  
-  
-  function showToastAsync(message,bool) {
-    return new Promise((resolve) => {
-      const toast = document.getElementById("toast");
-      toast.textContent = message;
-      toast.className = "toast show";
-	  if(bool)
-		{
-			toast.style.backgroundColor = "#4CAF50";
-		}
-	 else
-	 {
-		toast.style.backgroundColor = "#f44336";
-	 }
-      setTimeout(() => {
-        toast.className = toast.className.replace("show", "");
-        resolve(); // Proceed to next toast after 3s
-      }, 3000);
+  if (toBuy > 0 && toBuy <= product.quantity) {
+    // 1. Add to cart
+    const cartItems = JSON.parse(localStorage.getItem("cartItems")) || [];
+    cartItems.push({
+      name: product.name,
+      quantity: toBuy,
+      category: product.category,
+      price: product.price,
+      image: product.image
     });
-  }
+    localStorage.setItem("cartItems", JSON.stringify(cartItems));
 
-  
-  async function fetchLowStock() {
-    const response = await fetch('/api/products');
-    const data = await response.json();
-    console.log(data);
-	
-    // Sequential toast display
-    for (let i = 0; i < data.length; i++) {
-		if(data[i].quantity <= 5)
-      await showToastAsync(`⚠️ ${data[i].name} - Only ${data[i].quantity} left in stock!`,false);
+    // 2. Show success toast
+    showToastAsync(`${product.name} added to cart!`, true);
+
+    // 3. Decrease stock in-memory & update UI
+    product.quantity -= toBuy;
+    const availSpan = infoDiv.querySelector(".avail-count");
+    availSpan.textContent = product.quantity;
+
+    // 4. If now out of stock, remove controls & show label
+    if (product.quantity <= 0) {
+      qtyInput.remove();
+      button.remove();
+      const oos = document.createElement("p");
+      oos.textContent = "Out of Stock";
+      oos.style.color = "red";
+      oos.style.fontWeight = "bold";
+      infoDiv.appendChild(oos);
+    } else {
+      // also update input max so user can't exceed new stock
+      qtyInput.max = product.quantity;
+      if (parseInt(qtyInput.value, 10) > product.quantity) {
+        qtyInput.value = product.quantity;
+      }
     }
+
+  } else {
+    alert(`Please enter a valid quantity (1 to ${product.quantity})`);
   }
-  setTimeout(fetchLowStock, 3000);   // First after 3s
-  setInterval(fetchLowStock, 30000); // Then every 30s
+}
+
+// Toast helper (green for success, red for warnings)
+function showToastAsync(message, success) {
+  return new Promise(resolve => {
+    const toast = document.getElementById("toast");
+    toast.textContent = message;
+    toast.className = "toast show";
+    toast.style.backgroundColor = success ? "#4CAF50" : "#f44336";
+
+    setTimeout(() => {
+      toast.className = toast.className.replace("show", "");
+      resolve();
+    }, 3000);
+  });
+}
+
+// Optional: if you want to keep low-stock warnings
+async function fetchLowStock() {
+  try {
+    const response = await fetch("/api/products");
+    const data = await response.json();
+    for (const p of data) {
+      if (p.quantity <= 5) {
+        // red toast for low stock
+        // (no UI-stock change here, just an alert)
+        // await showToastAsync(`⚠️ ${p.name} - Only ${p.quantity} left!`, false);
+      }
+    }
+  } catch (err) {
+    console.error("Low-stock check failed:", err);
+  }
+}
+// Run low-stock check 3s after load, then every 30s
+setTimeout(fetchLowStock, 3000);
+setInterval(fetchLowStock, 30000);
